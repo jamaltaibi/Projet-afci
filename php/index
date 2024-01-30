@@ -1,0 +1,24 @@
+ <?php 
+
+$tab = [
+    ["id" => "1", "nom" => "brandt", "prenom" => "thomas"],
+    ["id" => "2", "nom" => "aa", "prenom" => "aaprenom"],
+    ["id" => "3", "nom" => "bb", "prenom" => "bbprenom"],
+    ["id" => "4", "nom" => "cc", "prenom" => "ccprenom"],
+];
+
+var_dump($tab) ;
+echo "<br>";
+
+foreach($tab as $value){
+    echo $value["id"] . " " . $value["nom"] . " " . $value["prenom"] . "<br>";
+}
+
+foreach($tab as $value){
+    foreach($value as $value2){
+        echo $value2 . " ";
+    }
+    echo "<br>";
+}
+
+?>

@@ -82,7 +82,7 @@ if (isset($_POST['submitRole'])){
 
     echo "<h2>Liste des Roles :</h2>";
     echo "<table border='1'>";
-    echo "<tr><th>ID</th><th>Nom Role</th></tr>";
+    echo "<tr><th>ID</th><th>Nom Role</th><th>Modification</th></tr>";
 
 foreach( $results as $value ){
     // var_dump($value);
@@ -91,9 +91,38 @@ foreach( $results as $value ){
     echo "<tr>";
         echo "<td>" . $value["id_role"] . "</td>";
         echo "<td>" . $value["nom_role"] . "</td>";
+        echo "<td>
+                  <a href='?page=role&action=modifier&id=" . $value["id_role"] . "'>Modifier</a> 
+              </td>";
         echo "</tr>"; 
     } 
-    echo "</table>";  
+    echo "</table>";
+
+    if (isset($_GET['action']) && isset($_GET['id'])) {
+        $action = $_GET['action'];
+        $id = $_GET['id'];
+    
+       if ($action == 'modifier') {
+            
+            $sql = "SELECT * FROM role WHERE id_role = $id";
+            $requete = $bdd->query($sql);
+            $role = $requete->fetch(PDO::FETCH_ASSOC);
+    
+            echo "<h1 class='titre'>Modification du rôle</h1>";
+            echo "<form method='POST'>
+                      <label> Nouveau Nom de Role </label>
+                      <input type='text' name='nouveauNomRole' value='" . $role['nom_role'] . "'>
+                      <input type='submit' name='modifierRole' value='Modifier'>
+                  </form>";
+    
+            if (isset($_POST['modifierRole'])) {
+                $nouveauNomRole = $_POST['nouveauNomRole'];
+                $sql = "UPDATE role SET nom_role = '$nouveauNomRole' WHERE id_role = $id";
+                $bdd->query($sql);
+                echo "Le rôle a été modifié dans la base de données.";
+            }
+        }
+    }      
 }
 
 
@@ -130,7 +159,7 @@ if (isset($_POST['submitCentre'])){
 
    echo "<h2>Liste des centres :</h2>";
    echo "<table border='1'>";
-   echo "<tr><th>ID</th><th>Ville</th><th>Adresse</th><th>Code Postal</th></tr>";
+   echo "<tr><th>ID</th><th>Ville</th><th>Adresse</th><th>Code Postal</th><th>Modification</th><th>Suppression</th></tr>";
   
   foreach( $results as $value ){
     // var_dump($value);
@@ -141,9 +170,51 @@ if (isset($_POST['submitCentre'])){
         echo "<td>" . $value["ville_centre"] . "</td>";
         echo "<td>" . $value["adresse_centre"] . "</td>";
         echo "<td>" . $value["code_postal_centre"] . "</td>";
+        echo "<td>  <a href='?page=centre&action=modifier&id=" . $value["id_centre"] . "'>Modifier</a> </td>";
+        echo "<td>  <a href='?page=centre&action=supprimer&id=" . $value["id_centre"] . "'>Supprimer</a> </td>";
         echo "</tr>"; 
   }
         echo "</table>";
+
+        if (isset($_GET['action']) && isset($_GET['id'])) {
+            $action2 = $_GET['action'];
+            $id2 = $_GET['id'];
+        
+            if ($action2 == 'supprimer') {
+                $sql = "DELETE FROM `centres` WHERE `id_centre` = $id2";
+                $bdd->query($sql);
+                echo "Le Centre a été supprimé de la base de données.";
+            } elseif ($action2 == 'modifier') {
+        
+                $sql = "SELECT `id_centre`, `ville_centre`, `adresse_centre`, `code_postal_centre` FROM `centres` WHERE `id_centre` = $id2";
+                $requete = $bdd->query($sql);
+                $role = $requete->fetch(PDO::FETCH_ASSOC);
+        
+                echo "<h1 class='titre'>Modification du Centre</h1>";
+                echo "<form method='POST'>
+                          <label> Nouvel ID du Centre </label>
+                          <input type='text' name='nouvelIDcentre' value='" . $role['id_centre'] . "'>
+                          <label> Nouvel Ville du Centre </label>
+                          <input type='text' name='nouvelVilleCentre' value='" . $role['ville_centre'] . "'>
+                          <label> Nouvel Adresse du Centre </label>
+                          <input type='text' name='nouvelAdresseCentre' value='" . $role['adresse_centre'] . "'>
+                          <label> Nouveau Code Postale </label>
+                          <input type='text' name='nouveauCentreCp' value='" . $role['code_postal_centre'] . "'>
+                          <input type='submit' name='modifierCentre' value='Modifier'>
+                      </form>";
+        
+                if (isset($_POST['modifierCentre'])) {
+                    $nouvelIDcentre = $_POST['nouvelIDcentre'];
+                    $nouvelVilleCentre = $_POST['nouvelVilleCentre'];
+                    $nouvelAdresseCentre = $_POST['nouvelAdresseCentre'];
+                    $nouveauCentreCp = $_POST['nouveauCentreCp'];
+
+                    $sql = "UPDATE `centres` SET `id_centre`='$nouvelIDcentre ',`ville_centre`='$nouvelVilleCentre',`adresse_centre`='$nouvelAdresseCentre',`code_postal_centre`='$nouveauCentreCp' WHERE `id_centre` = $id2 ";
+                    $bdd->query($sql);
+                    echo "Le Centre a été modifié dans la base de données.";
+                }
+            }
+        } 
 }
 
 
@@ -182,7 +253,7 @@ if (isset($_POST['submitFormation'])){
 
  echo "<h2>Liste des Formations :</h2>";
  echo "<table border='1'>";
- echo "<tr><th>ID</th><th>Nom Formation</th><th>Durée Formation </th> <th>Niveau de Sortie</th> </tr>";
+ echo "<tr><th>ID</th><th>Nom Formation</th><th>Durée Formation </th> <th>Niveau de Sortie</th> <th>Description</th><th>Modification</th><th>Suppression</th> </tr>";
 
 
 foreach( $results as $value ){
@@ -195,9 +266,54 @@ foreach( $results as $value ){
         echo "<td>" . $value["duree_formation"] . "</td>";
         echo "<td>" . $value["niveau_sortie_formation"] . "</td>";
         echo "<td>" . $value["description"] . "</td>";
+        echo "<td>  <a href='?page=formation&action=modifier&id=" . $value["id_formation"] . "'>Modifier</a> </td>";
+        echo "<td>  <a href='?page=formation&action=supprimer&id=" . $value["id_formation"] . "'>Supprimer</a> </td>";
         echo "</tr>"; 
 }
         echo "</table>";
+
+        if (isset($_GET['action']) && isset($_GET['id'])) {
+            $action3 = $_GET['action'];
+            $id3 = $_GET['id'];
+        
+            if ($action3 == 'supprimer') {
+                $sql = "DELETE FROM `formations` WHERE `id_formation` = $id3";
+                $bdd->query($sql);
+                echo "La formation a été supprimé de la base de données.";
+            } elseif ($action3 == 'modifier') {
+                
+                $sql = "SELECT `id_formation`, `nom_formation`, `duree_formation`, `niveau_sortie_formation`,`description` FROM `formations` WHERE `id_formation` = $id3";
+                $requete = $bdd->query($sql);
+                $role = $requete->fetch(PDO::FETCH_ASSOC);
+        
+                echo "<h1 class='titre'>Modification de la Formation</h1>";
+                echo "<form method='POST'>
+                          <label> Nouvel ID de Formation </label>
+                          <input type='text' name='nouvelIDformation' value='" . $role['id_formation'] . "'>
+                          <label> Nouveau Nom de la formation </label>
+                          <input type='text' name='nouveauNomformation' value='" . $role['nom_formation'] . "'>
+                          <label> Nouvel Durée de la formation </label>
+                          <input type='text' name='nouvelDureeformation' value='" . $role['duree_formation'] . "'>
+                          <label> Nouveau Niveau de sortie </label>
+                          <input type='text' name='nouveauNiveauformation' value='" . $role['niveau_sortie_formation'] . "'>
+                          <label> Nouvel Description </label>
+                          <input type='text' name='nouveldescriptionformation' value='" . $role['description'] . "'>
+                          <input type='submit' name='modifierFormation' value='Modifier'>
+                      </form>";
+        
+                if (isset($_POST['modifierFormation'])) {
+                    $nouvelIDformation = $_POST['nouvelIDformation'];
+                    $nouveauNomformation = $_POST['nouveauNomformation'];
+                    $nouvelDureeformation = $_POST['nouvelDureeformation'];
+                    $nouveauNiveauformation = $_POST['nouveauNiveauformation'];
+                    $nouveldescriptionformation = $_POST['nouveldescriptionformation'];
+
+                    $sql = "UPDATE `formations` SET `id_formation`='$nouvelIDformation',`nom_formation`='$nouveauNomformation',`duree_formation`='$nouvelDureeformation',`niveau_sortie_formation`='$nouveauNiveauformation',`description`='$nouveldescriptionformation' WHERE `id_formation` = $id3";
+                    $bdd->query($sql);
+                    echo "La Formation a été modifié dans la base de données.";
+                }
+            }
+        }
 }
 
 
@@ -244,54 +360,78 @@ if (isset($_POST['submitPedagogie'])){
     echo "data ajoutée dans la bdd";
 }
 
- $sql = "SELECT * FROM pedagogie";
+ $sql = "SELECT `pedagogie`.`id_pedagogie`,`pedagogie`.`nom_pedagogie`, `pedagogie`.`prenom_pedagogie`, `pedagogie`.`mail_pedagogie`,`pedagogie`.`num_pedagogie`, `role`.`id_role`,`role`.`nom_role` FROM `pedagogie` INNER JOIN  `role` on `pedagogie`.`id_role` = `role`.`id_role`";
  $requete = $bdd->query($sql);
  $results = $requete->fetchAll(PDO::FETCH_ASSOC);
 
  echo "<h2>Equipe Pédagogique :</h2>";
  echo "<table border='1'>";
- echo "<tr> <th>ID</th> <th>Nom</th> <th>Prénom</th> <th>Mail</th> <th>Numéro Pédagogique</th> <th>ID Role</th> </tr>";
+ echo "<tr> <th>ID</th> <th>Nom</th> <th>Prénom</th> <th>Mail</th> <th>Numéro Pédagogique</th> <th>ID Role</th><th>Nom Role</th><th>Modification</th><th>Suppression</th> </tr>";
  
 
 foreach( $results as $value ){
 //    echo $value["id_pedagogie"] . " - " . $value["nom_pedagogie"] . " - " . $value["prenom_pedagogie"] . " - " . $value["mail_pedagogie"]. " - " . $value["num_pedagogie"]. "-" . $value["id_role"]."<br>"; 
 
-   echo "<tr>";
-   echo "<td>" . $value["id_pedagogie"] . "</td>";
-   echo "<td>" . $value["nom_pedagogie"] . "</td>";
-   echo "<td>" . $value["prenom_pedagogie"] . "</td>";
-   echo "<td>" . $value["mail_pedagogie"] . "</td>";
-   echo "<td>" . $value["num_pedagogie"] . "</td>";
-   echo "<td>" . $value["id_role"] . "</td>";
-   echo "</tr>"; 
+    echo "<tr>";
+    echo "<td>" . $value["id_pedagogie"] . "</td>";
+    echo "<td>" . $value["nom_pedagogie"] . "</td>";
+    echo "<td>" . $value["prenom_pedagogie"] . "</td>";
+    echo "<td>" . $value["mail_pedagogie"] . "</td>";
+    echo "<td>" . $value["num_pedagogie"] . "</td>";
+    echo "<td>" . $value["id_role"] . "</td>";
+    echo "<td>" . $value["nom_role"] . "</td>";
+    echo "<td>  <a href='?page=pedagogie&action=modifier&id=" . $value["id_pedagogie"] . "'>Modifier</a> </td>";
+    echo "<td>  <a href='?page=pedagogie&action=supprimer&id=" . $value["id_pedagogie"] . "'>Supprimer</a> </td>";
+    echo "</tr>"; 
     }
     echo "</table>";
+
+    if (isset($_GET['action']) && isset($_GET['id'])) {
+        $action4 = $_GET['action'];
+        $id4 = $_GET['id'];
+    
+        if ($action4 == 'supprimer') {
+            $sql = "DELETE FROM `centres` WHERE `id_centre` = $id4";
+            $bdd->query($sql);
+            echo "Un Membre de l'Equipe Pédagogique a été supprimé de la base de données.";
+        } elseif ($action4 == 'modifier') {
+            // Récupérer les détails du rôle à modifier
+            $sql = "SELECT `id_pedagogie`, `nom_pedagogie`, `prenom_pedagogie`, `mail_pedagogie`, `num_pedagogie`, `id_role` FROM `pedagogie` WHERE `id_centre` = $id4;"
+            $requete = $bdd->query($sql);
+            $role = $requete->fetch(PDO::FETCH_ASSOC);
+    
+            // Afficher un formulaire de modification pré-rempli
+            echo "<h1 class='titre'>Modification du Centre</h1>";
+            echo "<form method='POST'>
+                      <label> Nouvel ID du Centre </label>
+                      <input type='text' name='nouvelIDcentre' value='" . $role['id_centre'] . "'>
+                      <label> Nouvel Ville du Centre </label>
+                      <input type='text' name='nouvelVilleCentre' value='" . $role['ville_centre'] . "'>
+                      <label> Nouvel Adresse du Centre </label>
+                      <input type='text' name='nouvelAdresseCentre' value='" . $role['adresse_centre'] . "'>
+                      <label> Nouveau Code Postale </label>
+                      <input type='text' name='nouveauCentreCp' value='" . $role['code_postal_centre'] . "'>
+                      <input type='submit' name='modifierCentre' value='Modifier'>
+                  </form>";
+    
+            if (isset($_POST['modifierCentre'])) {
+                $nouvelIDcentre = $_POST['nouvelIDcentre'];
+                $nouvelVilleCentre = $_POST['nouvelVilleCentre'];
+                $nouvelAdresseCentre = $_POST['nouvelAdresseCentre'];
+                $nouveauCentreCp = $_POST['nouveauCentreCp'];
+
+                $sql = "UPDATE `centres` SET `id_centre`='$nouvelIDcentre ',`ville_centre`='$nouvelVilleCentre',`adresse_centre`='$nouvelAdresseCentre',`code_postal_centre`='$nouveauCentreCp' WHERE `id_centre` = $id2 ";
+                $bdd->query($sql);
+                echo "Un Membre de l'Equipe Pédagogique a été modifié dans la base de données.";
+            }
+        }
+    } 
 }
 
 
 // Gestion Session :
     // Insérer des données dans la BDD
 if(isset($_GET["page"]) && $_GET["page"] == "session" ){
-
-    $sqlSession = "SELECT
-    `session`.`id_session`,
-    `session`.`nom_session`,
-    `session`.`date_debut`,
-    `session`.`id_pedagogie`,
-    `pedagogie`.`nom_pedagogie`,
-    `pedagogie`.`prenom_pedagogie`,
-    `session`.`id_formation`,
-    `formations`.`nom_formation`,
-    `session`.`id_centre`,
-    `centres`.`ville_centre`
-    FROM
-    `session`
-    LEFT JOIN
-    `formations` ON `session`.`id_formation` = `formations`.`id_formation`
-    LEFT JOIN
-    `pedagogie` ON `session`.`id_pedagogie` = `pedagogie`.`id_pedagogie`
-    LEFT JOIN
-    `centres` ON `session`.`id_centre` = `centres`.`id_centre`;";
 
     $sqlp = "SELECT * FROM pedagogie";
     $requetep = $bdd->query($sqlp);
@@ -347,24 +487,42 @@ if (isset($_POST['submitSession'])){
     $dateSession = $_POST['dateSession'];
     $idpedagoSession = $_POST['idpedagosession'];
     $idformationSession = $_POST['idformationsession'];
-    $idcentreSession = $_POST['idcentresession'];
+    
 
     $sql = "INSERT INTO `session`(`nom_session`,`date_debut`,`id_pedagogie`,`id_formation`,`id_centre`) VALUES ('$nomSession','$dateSession','$idpedagoSession','$idformationSession','$idcentreSession')";
     $bdd->query($sql);
     echo "data ajoutée dans la bdd";
 }
 
- $sql = "SELECT * FROM session";
+ $sql = "SELECT
+ `session`.`id_session`,
+ `session`.`nom_session`,
+ `session`.`date_debut`,
+ `session`.`id_pedagogie`,
+ `pedagogie`.`nom_pedagogie`,
+ `pedagogie`.`prenom_pedagogie`,
+ `session`.`id_formation`,
+ `formations`.`nom_formation`,
+ `session`.`id_centre`,
+ `centres`.`ville_centre`
+ FROM
+ `session`
+ LEFT JOIN
+ `formations` ON `session`.`id_formation` = `formations`.`id_formation`
+ LEFT JOIN
+ `pedagogie` ON `session`.`id_pedagogie` = `pedagogie`.`id_pedagogie`
+ LEFT JOIN
+ `centres` ON `session`.`id_centre` = `centres`.`id_centre`;";
  $requete = $bdd->query($sql);
  $results = $requete->fetchAll(PDO::FETCH_ASSOC);
 
  echo "<h2>Liste des Sessions :</h2>";
  echo "<table border='1'>";
- echo "<tr> <th>ID</th> <th>Nom</th> <th>Date de Début</th> <th>ID Pédagogique</th> <th>ID Formation</th> <th>ID Centre</th> </tr>";
+ echo "<tr> <th>ID</th> <th>Nom</th> <th>Date de Début</th> <th>ID Pédagogique</th> <th>ID Formation</th> <th>Nom formation</th> <th>ID Centre</th><th>Ville centre</th> </tr>";
 
 foreach( $results as $value ){
     // var_dump($value);
-    echo $value["id_session"] . " - " . $value["nom_session"]." - ". $value["date_debut"]. " : " . $value["id_pedagogie"]. " - " . $value["id_formation"] . " - ".$value["id_centre"]. "<br>"; 
+    // echo $value["id_session"] . " - " . $value["nom_session"]." - ". $value["date_debut"]. " : " . $value["id_pedagogie"]. " - " . $value["id_formation"] . " - ".$value["id_centre"]. "<br>"; 
 
     echo "<tr>";
    echo "<td>" . $value["id_session"] . "</td>";
@@ -372,11 +530,55 @@ foreach( $results as $value ){
    echo "<td>" . $value["date_debut"] . "</td>";
    echo "<td>" . $value["id_pedagogie"] . "</td>";
    echo "<td>" . $value["id_formation"] . "</td>";
+   echo "<td>" . $value["nom_formation"] . "</td>";
    echo "<td>" . $value["id_centre"] . "</td>";
+   echo "<td>" . $value["ville_centre"] . "</td>";
    echo "</tr>";
     }
     echo "</table>";
+
+    if (isset($_GET['action']) && isset($_GET['id'])) {
+        $action2 = $_GET['action'];
+        $id2 = $_GET['id'];
+    
+        if ($action2 == 'supprimer') {
+            $sql = "DELETE FROM `centres` WHERE `id_centre` = $id2";
+            $bdd->query($sql);
+            echo "Le rôle a été supprimé de la base de données.";
+        } elseif ($action2 == 'modifier') {
+            // Récupérer les détails du rôle à modifier
+            $sql = "SELECT `id_centre`, `ville_centre`, `adresse_centre`, `code_postal_centre` FROM `centres` WHERE `id_centre` = $id2";
+            $requete = $bdd->query($sql);
+            $role = $requete->fetch(PDO::FETCH_ASSOC);
+    
+            // Afficher un formulaire de modification pré-rempli
+            echo "<h1 class='titre'>Modification du Centre</h1>";
+            echo "<form method='POST'>
+                      <label> Nouvel ID du Centre </label>
+                      <input type='text' name='nouvelIDcentre' value='" . $role['id_centre'] . "'>
+                      <label> Nouvel Ville du Centre </label>
+                      <input type='text' name='nouvelVilleCentre' value='" . $role['ville_centre'] . "'>
+                      <label> Nouvel Adresse du Centre </label>
+                      <input type='text' name='nouvelAdresseCentre' value='" . $role['adresse_centre'] . "'>
+                      <label> Nouveau Code Postale </label>
+                      <input type='text' name='nouveauCentreCp' value='" . $role['code_postal_centre'] . "'>
+                      <input type='submit' name='modifierCentre' value='Modifier'>
+                  </form>";
+    
+            if (isset($_POST['modifierCentre'])) {
+                $nouvelIDcentre = $_POST['nouvelIDcentre'];
+                $nouvelVilleCentre = $_POST['nouvelVilleCentre'];
+                $nouvelAdresseCentre = $_POST['nouvelAdresseCentre'];
+                $nouveauCentreCp = $_POST['nouveauCentreCp'];
+
+                $sql = "UPDATE `centres` SET `id_centre`='$nouvelIDcentre ',`ville_centre`='$nouvelVilleCentre',`adresse_centre`='$nouvelAdresseCentre',`code_postal_centre`='$nouveauCentreCp' WHERE `id_centre` = $id2 ";
+                $bdd->query($sql);
+                echo "Le rôle a été modifié dans la base de données.";
+            }
+        }
+    } 
 }
+
 
 
 // Gestion Apprenants :
@@ -462,28 +664,103 @@ if (isset($_POST['submitApprenant'])){
     echo "data ajoutée dans la bdd";
 }
 
- $sql = "SELECT * FROM apprenants";
+ $sql = "SELECT 
+ `apprenants`.`id_apprenant`,
+ `apprenants`.`nom_apprenant`, 
+ `apprenants`.`prenom_apprenant`,
+ `apprenants`.`mail_apprenant`,
+ `apprenants`.`adresse_apprenant`,
+ `apprenants`.`ville_apprenant`,
+ `apprenants`.`code_postal_apprenant`,
+ `apprenants`.`tel_apprenant`,
+ `apprenants`.`date_naissance_apprenant`,
+ `apprenants`.`niveau_apprenant`,
+ `apprenants`.`num_PE_apprenant`,
+ `apprenants`.`num_secu_apprenant`,
+ `apprenants`.`rib_apprenant`,
+ `role`.`id_role`,
+ `role`.`nom_role`,
+ `session`.`id_session`,
+ `session`.`nom_session` 
+ FROM 
+ `apprenants` 
+ left JOIN 
+ `role` on `apprenants`.id_role = `role`.id_role
+ left JOIN 
+ `session` on `apprenants`.`id_session` = `session`.id_session";
  $requete = $bdd->query($sql);
  $results = $requete->fetchAll(PDO::FETCH_ASSOC);
 
- echo "<h2>Equipe Pédagogique :</h2>";
+ echo "<h2>Liste des Apprenants :</h2>";
  echo "<table border='1'>";
- echo "<tr> <th>ID</th> <th>Nom</th> <th>Prénom</th> <th>Mail</th> <th>Numéro Pédagogique</th> <th>ID Role</th> </tr>";
+ echo "<tr> <th>ID</th> <th>Nom</th> <th>Prénom</th> <th>Mail</th> <th>Adresse</th> <th>Ville</th> <th>Code Postale</th> <th>Tel</th> <th>Date de Naissance</th><th>Niveau Scolaire</th> <th>Numéro Pole emploi</th> <th>Numero Secu</th><th>RIB</th> <th>ID Role</th> <th>Nom Role</th> <th>Id Session</th> <th>Nom Session</th> </tr>";
 
 foreach( $results as $value ){
     // var_dump($value);
-   echo $value["id_apprenant"] . " - " . $value["nom_apprenant"] . " - " . $value["prenom_apprenant"] . " - " . $value["mail_apprenant"]. "- " . $value["adresse_apprenant"]. " - " . $value["ville_apprenant"]. " - " . $value["code_postal_apprenant"]. " - " . $value["tel_apprenant"]." - ". $value["date_naissance_apprenant"]. " - " . $value["niveau_apprenant"]. " - " . $value["num_PE_apprenant"]. " - " . $value["num_secu_apprenant"]. " - " . $value["rib_apprenant"]. " - " . $value["id_role"]. " - " . $value["id_session"]. "<br>"; 
+//    echo $value["id_apprenant"] . " - " . $value["nom_apprenant"] . " - " . $value["prenom_apprenant"] . " - " . $value["mail_apprenant"]. "- " . $value["adresse_apprenant"]. " - " . $value["ville_apprenant"]. " - " . $value["code_postal_apprenant"]. " - " . $value["tel_apprenant"]." - ". $value["date_naissance_apprenant"]. " - " . $value["niveau_apprenant"]. " - " . $value["num_PE_apprenant"]. " - " . $value["num_secu_apprenant"]. " - " . $value["rib_apprenant"]. " - " . $value["id_role"]. " - " . $value["id_session"]. "<br>"; 
 
    echo "<tr>";
-   echo "<td>" . $value["id_pedagogie"] . "</td>";
-   echo "<td>" . $value["nom_pedagogie"] . "</td>";
-   echo "<td>" . $value["prenom_pedagogie"] . "</td>";
-   echo "<td>" . $value["mail_pedagogie"] . "</td>";
-   echo "<td>" . $value["num_pedagogie"] . "</td>";
+   echo "<td>" . $value["id_apprenant"] . "</td>";
+   echo "<td>" . $value["nom_apprenant"] . "</td>";
+   echo "<td>" . $value["prenom_apprenant"] . "</td>";
+   echo "<td>" . $value["mail_apprenant"] . "</td>";
+   echo "<td>" . $value["adresse_apprenant"] . "</td>";
+   echo "<td>" . $value["ville_apprenant"] . "</td>";
+   echo "<td>" . $value["code_postal_apprenant"] . "</td>";
+   echo "<td>" . $value["tel_apprenant"] . "</td>";
+   echo "<td>" . $value["date_naissance_apprenant"] . "</td>";
+   echo "<td>" . $value["niveau_apprenant"] . "</td>";
+   echo "<td>" . $value["num_PE_apprenant"] . "</td>";
+   echo "<td>" . $value["num_secu_apprenant"] . "</td>";
+   echo "<td>" . $value["rib_apprenant"] . "</td>";
    echo "<td>" . $value["id_role"] . "</td>";
+   echo "<td>" . $value["nom_role"] . "</td>";
+   echo "<td>" . $value["id_session"] . "</td>";
+   echo "<td>" . $value["nom_session"] . "</td>";
    echo "</tr>";
-
     }
+    echo "</table>";
+
+    if (isset($_GET['action']) && isset($_GET['id'])) {
+        $action2 = $_GET['action'];
+        $id2 = $_GET['id'];
+    
+        if ($action2 == 'supprimer') {
+            $sql = "DELETE FROM `centres` WHERE `id_centre` = $id2";
+            $bdd->query($sql);
+            echo "Le rôle a été supprimé de la base de données.";
+        } elseif ($action2 == 'modifier') {
+            // Récupérer les détails du rôle à modifier
+            $sql = "SELECT `id_centre`, `ville_centre`, `adresse_centre`, `code_postal_centre` FROM `centres` WHERE `id_centre` = $id2";
+            $requete = $bdd->query($sql);
+            $role = $requete->fetch(PDO::FETCH_ASSOC);
+    
+            // Afficher un formulaire de modification pré-rempli
+            echo "<h1 class='titre'>Modification du Centre</h1>";
+            echo "<form method='POST'>
+                      <label> Nouvel ID du Centre </label>
+                      <input type='text' name='nouvelIDcentre' value='" . $role['id_centre'] . "'>
+                      <label> Nouvel Ville du Centre </label>
+                      <input type='text' name='nouvelVilleCentre' value='" . $role['ville_centre'] . "'>
+                      <label> Nouvel Adresse du Centre </label>
+                      <input type='text' name='nouvelAdresseCentre' value='" . $role['adresse_centre'] . "'>
+                      <label> Nouveau Code Postale </label>
+                      <input type='text' name='nouveauCentreCp' value='" . $role['code_postal_centre'] . "'>
+                      <input type='submit' name='modifierCentre' value='Modifier'>
+                  </form>";
+    
+            if (isset($_POST['modifierCentre'])) {
+                $nouvelIDcentre = $_POST['nouvelIDcentre'];
+                $nouvelVilleCentre = $_POST['nouvelVilleCentre'];
+                $nouvelAdresseCentre = $_POST['nouvelAdresseCentre'];
+                $nouveauCentreCp = $_POST['nouveauCentreCp'];
+
+                $sql = "UPDATE `centres` SET `id_centre`='$nouvelIDcentre ',`ville_centre`='$nouvelVilleCentre',`adresse_centre`='$nouvelAdresseCentre',`code_postal_centre`='$nouveauCentreCp' WHERE `id_centre` = $id2 ";
+                $bdd->query($sql);
+                echo "Le rôle a été modifié dans la base de données.";
+            }
+        }
+    } 
 }
 
 ?>

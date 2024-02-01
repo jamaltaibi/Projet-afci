@@ -20,5 +20,80 @@ foreach($tab as $value){
     }
     echo "<br>";
 }
-
 ?>
+
+
+/////
+```php
+<?php
+if (isset($_GET["page"]) && $_GET["page"] == "role") {
+        $sql = "SELECT * FROM role";
+        $requete = $bdd->query($sql);
+        $results = $requete->fetchAll(PDO::FETCH_ASSOC);
+        
+        ?>
+        <div class="centerDiv">
+            <table>
+                <tr>
+                    <th>ID</th>
+                    <th>Nom Rôle</th>
+                    <th>modifier</th>
+                    <th>Action</th>
+                </tr>
+                <?php
+                foreach ($results as $item) {
+                    echo '<tr>';
+                    echo '<td>' . $item['id_role'] . '</td>';
+                    echo '<td>' . $item['nom_role'] . '</td>';
+                    echo '<input type="hidden" name="hiddenRole" value="'. $item['id_role'] . '">';
+                    echo '<td><a href="?page=role&type=modifier&id=' . $item['id_role'] . '"><button>Modifier</button></a></td>';
+                    echo '<td><button>Supprimer</button></td>';
+                    echo '</tr>';
+                }
+                ?>
+            </table>
+            <form method="POST">
+                <label for="">Ajouter un role</label>
+                <input type="text" name="nomRole">
+                <input type="submit" name="submitRole" value="Ajouter">
+            </form>
+            
+        </div>
+    <?php
+
+
+            if (isset($_GET['type']) && $_GET['type'] == "modifier"){
+
+                $id = $_GET["id"];
+                $sqlId = "SELECT * FROM role WHERE id_role = $id";
+                $requeteId = $bdd->query($sqlId);
+                $resultsId = $requeteId->fetch(PDO::FETCH_ASSOC);
+                ?>
+                <form method="POST">
+                    <input type="hidden" name="updateIdRole" value="<?php  echo $resultsId['id_role']; ?>">
+                    <input type="text" name="updateNomRole" value="<?php  echo $resultsId['nom_role']; ?>">
+                    <input type="submit" name="updateRole" value="Update Role">
+                </form>
+                <?php
+                if (isset($_POST["updateRole"])){
+                    $updateIdRole = $_POST["updateIdRole"];
+                    $updateNomRole = $_POST["updateNomRole"];
+                    $sqlUpdate = "UPDATE `role` SET `nom_role`='$updateNomRole' WHERE id_role = $updateIdRole";
+
+                    $bdd->query($sqlUpdate);
+                    echo "Données modifiées";
+                }
+            }
+    }
+    if (isset($_POST['submitRole'])) {
+        
+        $nomRole = $_POST['nomRole'];
+
+        $sql = "INSERT INTO `role`(`nom_role`) VALUES ('$nomRole')";
+        $bdd->query($sql);
+
+        echo "data ajoutée dans la bdd";
+    }
+
+```
+

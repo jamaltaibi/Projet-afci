@@ -1,0 +1,112 @@
+body{
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    margin: 0;
+}
+
+nav{
+    height: 10vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: bisque;
+}
+
+ul{
+    width: 70vw;
+    display: flex;
+    justify-content: space-around;
+    list-style-type: none;
+    font-size: larger;
+}
+label{
+    margin: 1vh;
+    color: #FFFFFF;
+    background: #FFFFFF;
+    text-shadow: 2px 2px 0 #4074b5, 2px -2px 0 #4074b5, -2px 2px 0 #4074b5, -2px -2px 0 #4074b5, 2px 0px 0 #4074b5, 0px 2px 0 #4074b5, -2px 0px 0 #4074b5, 0px -2px 0 #4074b5;
+}
+input{
+    margin-top: 1vh;
+}
+
+.titre{
+    height: 5vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.roleajout{
+    height: 10vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.ajoutcent{
+    height: 10vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.ajoutform{
+    height: 10vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.ajouep{
+    height: 10vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.moodifep{
+    height: 10vh;
+    width: 80vw;
+}
+
+.ajoutsess{
+    height: 10vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+.modifsess{
+    height: 10vh;
+    width: 68vw;
+
+}
+
+.ajoutapprenant{
+    height: 20vh;
+    width: 75vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.modifapprenant{
+    height: 20vh;
+    width: 80vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+.tableauappre{
+    height: 20vh;
+    width: 90vw;
+}

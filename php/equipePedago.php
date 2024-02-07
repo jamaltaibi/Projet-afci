@@ -38,17 +38,27 @@ if(isset($_GET["page"]) && $_GET["page"] == "pedagogie" ){
         </script>
     <?php
 
-    if (isset($_POST['submitPedagogie'])){
-        $nomMembrepedago = $_POST['nomMembrepedago'];
-        $prenomMembrepedago = $_POST['prenomMembrepedago'];
-        $mailMembrepedago = $_POST['mailMembrepedago'];
-        $numMembrepedago = $_POST['numMembrepedago'];
-        $rolepedago = $_POST['rolepedago'];
+if (isset($_POST['submitPedagogie'])) {
+    // Récupération des données et échappement XSS
+    $nomMembrepedago = isset($_POST['nomMembrepedago']) ? htmlspecialchars($_POST['nomMembrepedago']) : '';
+    $prenomMembrepedago = isset($_POST['prenomMembrepedago']) ? htmlspecialchars($_POST['prenomMembrepedago']) : '';
+    $mailMembrepedago = isset($_POST['mailMembrepedago']) ? htmlspecialchars($_POST['mailMembrepedago']) : '';
+    $numMembrepedago = isset($_POST['numMembrepedago']) ? htmlspecialchars($_POST['numMembrepedago']) : '';
+    $rolepedago = isset($_POST['rolepedago']) ? htmlspecialchars($_POST['rolepedago']) : '';
 
-        $sqlep = "INSERT INTO `pedagogie`(`nom_pedagogie`, `prenom_pedagogie`, `mail_pedagogie`, `num_pedagogie`,`id_role`) VALUES ('$nomMembrepedago','$prenomMembrepedago','$mailMembrepedago','$numMembrepedago','$rolepedago')";
-        $bdd->query($sqlep);
-        echo "data ajoutée dans la bdd";
+    // Vérification si les champs ne sont pas vides
+    if (!empty($nomMembrepedago) && !empty($prenomMembrepedago) && !empty($mailMembrepedago) && !empty($numMembrepedago) && !empty($rolepedago)) {
+        // Requête préparée pour l'insertion
+        $sqlep = "INSERT INTO `pedagogie`(`nom_pedagogie`, `prenom_pedagogie`, `mail_pedagogie`, `num_pedagogie`,`id_role`) VALUES (?, ?, ?, ?, ?)";
+        $requete = $bdd->prepare($sqlep);
+        // Exécution de la requête en passant les valeurs comme paramètres
+        $requete->execute([$nomMembrepedago, $prenomMembrepedago, $mailMembrepedago, $numMembrepedago, $rolepedago]);
+
+        echo "Données ajoutées dans la base de données.";
+    } else {
+        echo "Certains champs sont vides.";
     }
+}
 
     $sqlep = "SELECT `pedagogie`.`id_pedagogie`,`pedagogie`.`nom_pedagogie`, `pedagogie`.`prenom_pedagogie`, `pedagogie`.`mail_pedagogie`,`pedagogie`.`num_pedagogie`, `role`.`id_role`,`role`.`nom_role` FROM `pedagogie` INNER JOIN  `role` on `pedagogie`.`id_role` = `role`.`id_role`";
     $requeteep = $bdd->query($sqlep);
@@ -112,17 +122,26 @@ if(isset($_GET["page"]) && $_GET["page"] == "pedagogie" ){
             </div>
     <?php
             if (isset($_POST['modifierEquipepédago'])) {
-                $IDpedagogie = $_POST['nouvelIDpédagogie'];
-                $nouveauNomep = $_POST['nouveauNomep'];
-                $nouveauPrenomep = $_POST['nouveauPrenomep'];
-                $nouveauMailep = $_POST['nouveauMailep'];
-                $nouveauNumeroep = $_POST['nouveauNumeroep'];
-                $nouveaurolepedago = $_POST['nouveaurolepedago'];
-
-
-                $sqlep = "UPDATE `pedagogie` SET `nom_pedagogie`='$nouveauNomep',`prenom_pedagogie`='$nouveauPrenomep',`mail_pedagogie`='$nouveauMailep',`num_pedagogie`='$nouveauNumeroep',`id_role`='$nouveaurolepedago' WHERE `id_pedagogie` = $IDpedagogie ";
-                $bdd->query($sqlep);
-                echo " Un Membre de l'Equipe Pédagogique a été modifié dans la base de données.";
+                // Récupération des données et échappement XSS
+                $IDpedagogie = isset($_POST['nouvelIDpédagogie']) ? $_POST['nouvelIDpédagogie'] : '';
+                $nouveauNomep = isset($_POST['nouveauNomep']) ? htmlspecialchars($_POST['nouveauNomep']) : '';
+                $nouveauPrenomep = isset($_POST['nouveauPrenomep']) ? htmlspecialchars($_POST['nouveauPrenomep']) : '';
+                $nouveauMailep = isset($_POST['nouveauMailep']) ? htmlspecialchars($_POST['nouveauMailep']) : '';
+                $nouveauNumeroep = isset($_POST['nouveauNumeroep']) ? htmlspecialchars($_POST['nouveauNumeroep']) : '';
+                $nouveaurolepedago = isset($_POST['nouveaurolepedago']) ? htmlspecialchars($_POST['nouveaurolepedago']) : '';
+            
+                // Vérification si les champs ne sont pas vides
+                if (!empty($IDpedagogie) && !empty($nouveauNomep) && !empty($nouveauPrenomep) && !empty($nouveauMailep) && !empty($nouveauNumeroep) && !empty($nouveaurolepedago)) {
+                    // Requête préparée pour la mise à jour
+                    $sqlep = "UPDATE `pedagogie` SET `nom_pedagogie`=?, `prenom_pedagogie`=?, `mail_pedagogie`=?, `num_pedagogie`=?, `id_role`=? WHERE `id_pedagogie` = ?";
+                    $requete = $bdd->prepare($sqlep);
+                    // Exécution de la requête en passant les valeurs comme paramètres
+                    $requete->execute([$nouveauNomep, $nouveauPrenomep, $nouveauMailep, $nouveauNumeroep, $nouveaurolepedago, $IDpedagogie]);
+            
+                    echo "Un Membre de l'Equipe Pédagogique a été modifié dans la base de données.";
+                } else {
+                    echo "Certains champs sont vides.";
+                }
             }
         }
         if ($actionep == 'supprimer') {
@@ -136,14 +155,21 @@ if(isset($_GET["page"]) && $_GET["page"] == "pedagogie" ){
                     <input type='submit' name='supprimerMembreep' value='Supprimer'> 
                     </form>";
             
-            if (isset($_POST['supprimerMembreep'])){
-                $IDpedagogie = $_POST['IDpedagogie'];
-
-                $sqlep = "DELETE FROM `pedagogie` WHERE `id_pedagogie`= $IDpedagogie  ";
-                $bdd->query($sqlep);
-                echo "Le Membre de l'équipe Pédagogique a été supprimé de la base de données.";
-
-            }
+                    if (isset($_POST['supprimerMembreep'])) {
+                        // Récupération de l'identifiant du membre de l'équipe pédagogique et échappement XSS
+                        $IDpedagogie = isset($_POST['IDpedagogie']) ? $_POST['IDpedagogie'] : '';
+                    
+                        // Vérification si l'identifiant n'est pas vide
+                        if (!empty($IDpedagogie)) {
+                            // Requête préparée pour la suppression
+                            $sqlep = "DELETE FROM `pedagogie` WHERE `id_pedagogie`= ?";
+                            $requete = $bdd->prepare($sqlep);
+                            // Exécution de la requête en passant l'IDpedagogie comme paramètre
+                            $requete->execute([$IDpedagogie]);
+                    
+                            echo "Le Membre de l'équipe Pédagogique a été supprimé de la base de données.";
+                        }
+                    }
         } 
     } 
 }

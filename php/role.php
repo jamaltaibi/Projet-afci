@@ -6,6 +6,7 @@
 
 if(isset($_GET["page"]) && $_GET["page"] == "role" ){   
     ?>
+    
         <h1 class="titre">Ajouter un Rôle</h1>
         <input type='submit' value="Ajout d'un rôle" onclick="toggleFormVisibility()">
     <?php

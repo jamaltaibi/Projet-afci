@@ -110,27 +110,36 @@ if(isset($_GET["page"]) && $_GET["page"] == "apprenants" ){
         </script>
     <?php
 
-    if (isset($_POST['submitApprenant'])){
-        $nomApprenant = $_POST['nomApprenant'];
-        $prenomApprenant = $_POST['prenomApprenant'];
-        $mailApprenant = $_POST['mailApprenant'];
-        $adresseApprenant = $_POST['adresseApprenant'];
-        $villeApprenant = $_POST['villeApprenant'];
-        $cpApprenant = $_POST['cpApprenant'];
-        $telApprenant = $_POST['telApprenant'];
-        $datenaissanceApprenant = $_POST['datenaissanceApprenant'];
-        $niveauApprenant = $_POST['niveauApprenant'];
-        $numpeApprenant = $_POST['numpeApprenant'];
-        $numsecuApprenant = $_POST['numsecuApprenant'];
-        $ribApprenant = $_POST['ribApprenant'];
-        $Idroleapprenant = $_POST['Idroleapprenant'];
-        $idsessionapprenant = $_POST['idsessionapprenant'];
+if (isset($_POST['submitApprenant'])) {
+    // Récupération des données et échappement XSS
+    $nomApprenant = isset($_POST['nomApprenant']) ? htmlspecialchars($_POST['nomApprenant']) : '';
+    $prenomApprenant = isset($_POST['prenomApprenant']) ? htmlspecialchars($_POST['prenomApprenant']) : '';
+    $mailApprenant = isset($_POST['mailApprenant']) ? htmlspecialchars($_POST['mailApprenant']) : '';
+    $adresseApprenant = isset($_POST['adresseApprenant']) ? htmlspecialchars($_POST['adresseApprenant']) : '';
+    $villeApprenant = isset($_POST['villeApprenant']) ? htmlspecialchars($_POST['villeApprenant']) : '';
+    $cpApprenant = isset($_POST['cpApprenant']) ? htmlspecialchars($_POST['cpApprenant']) : '';
+    $telApprenant = isset($_POST['telApprenant']) ? htmlspecialchars($_POST['telApprenant']) : '';
+    $datenaissanceApprenant = isset($_POST['datenaissanceApprenant']) ? $_POST['datenaissanceApprenant'] : '';
+    $niveauApprenant = isset($_POST['niveauApprenant']) ? htmlspecialchars($_POST['niveauApprenant']) : '';
+    $numpeApprenant = isset($_POST['numpeApprenant']) ? htmlspecialchars($_POST['numpeApprenant']) : '';
+    $numsecuApprenant = isset($_POST['numsecuApprenant']) ? htmlspecialchars($_POST['numsecuApprenant']) : '';
+    $ribApprenant = isset($_POST['ribApprenant']) ? htmlspecialchars($_POST['ribApprenant']) : '';
+    $Idroleapprenant = isset($_POST['Idroleapprenant']) ? $_POST['Idroleapprenant'] : '';
+    $idsessionapprenant = isset($_POST['idsessionapprenant']) ? $_POST['idsessionapprenant'] : '';
 
+    // Vérification si les champs ne sont pas vides
+    if (!empty($nomApprenant) && !empty($prenomApprenant) && !empty($mailApprenant) && !empty($adresseApprenant) && !empty($villeApprenant) && !empty($cpApprenant) && !empty($telApprenant) && !empty($datenaissanceApprenant) && !empty($niveauApprenant) && !empty($numpeApprenant) && !empty($numsecuApprenant) && !empty($ribApprenant) && !empty($Idroleapprenant) && !empty($idsessionapprenant)) {
+        // Requête préparée pour l'insertion d'apprenant
+        $sql = "INSERT INTO `apprenants`(`nom_apprenant`, `prenom_apprenant`, `mail_apprenant`, `adresse_apprenant`, `ville_apprenant`, `code_postal_apprenant`, `tel_apprenant`, `date_naissance_apprenant`, `niveau_apprenant`, `num_PE_apprenant`, `num_secu_apprenant`, `rib_apprenant`, `id_role`, `id_session`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $requete = $bdd->prepare($sql);
+        // Exécution de la requête en passant les valeurs comme paramètres
+        $requete->execute([$nomApprenant, $prenomApprenant, $mailApprenant, $adresseApprenant, $villeApprenant, $cpApprenant, $telApprenant, $datenaissanceApprenant, $niveauApprenant, $numpeApprenant, $numsecuApprenant, $ribApprenant, $Idroleapprenant, $idsessionapprenant]);
 
-        $sql = "INSERT INTO `apprenants`(`nom_apprenant`, `prenom_apprenant`, `mail_apprenant`, `adresse_apprenant`, `ville_apprenant`, `code_postal_apprenant`, `tel_apprenant`, `date_naissance_apprenant`, `niveau_apprenant`, `num_PE_apprenant`, `num_secu_apprenant`, `rib_apprenant`,`id_role`, `id_session`) VALUES ('$nomApprenant','$prenomApprenant','$mailApprenant','$adresseApprenant','$villeApprenant','$cpApprenant','$telApprenant','$datenaissanceApprenant','$niveauApprenant','$numpeApprenant','$numsecuApprenant','$ribApprenant','$Idroleapprenant','$idsessionapprenant')";
-        $bdd->query($sql);
-        echo "data ajoutée dans la bdd";
+        echo "Données ajoutées dans la base de données.";
+    } else {
+        echo "Certains champs sont vides.";
     }
+}
 
     if (isset($_GET['action']) && isset($_GET['id'])) {
         $actionapprenant = $_GET['action'];
@@ -194,26 +203,35 @@ if(isset($_GET["page"]) && $_GET["page"] == "apprenants" ){
             </div>
     <?php
                 if (isset($_POST['modifierApprenant'])) {
-                    $IDapprenant = $_POST['nouvelIDapprenant'];
-                    $nouveaunomApprenant = $_POST['nouveaunomApprenant'];
-                    $nouveauprenomApprenant = $_POST['nouveauprenomApprenant'];
-                    $nouveaumailApprenant = $_POST['nouveaumailApprenant'];
-                    $nouveladresseApprenant = $_POST['nouveladresseApprenant'];
-                    $nouvelvilleApprenant = $_POST['nouvelvilleApprenant'];
-                    $nouveaucpApprenant = $_POST['nouveaucpApprenant'];
-                    $nouveautelApprenant = $_POST['nouveautelApprenant'];
-                    $nouveldatenaissanceApprenant = 
-                    $_POST['nouveldatenaissanceApprenant']; 
-                    $nouveauniveauApprenant = $_POST['nouveauniveauApprenant'];
-                    $nouveaunumpeApprenant = $_POST['nouveaunumpeApprenant'];
-                    $nouveaunumsecuApprenant = $_POST['nouveaunumsecuApprenant'];
-                    $nouveauribApprenant = $_POST['nouveauribApprenant'];
-                    $newIdroleapprenant = $_POST['newIdroleapprenant'];
-                    $newidsessionapprenant = $_POST['newidsessionapprenant'];
-
-                    $sqlapprenant = "UPDATE `apprenants` SET `id_apprenant`='$IDapprenant',`nom_apprenant`='$nouveaunomApprenant',`prenom_apprenant`='$nouveauprenomApprenant',`mail_apprenant`='$nouveaumailApprenant',`adresse_apprenant`='$nouveladresseApprenant',`ville_apprenant`='$nouvelvilleApprenant',`code_postal_apprenant`='$nouveaucpApprenant',`tel_apprenant`='$nouveautelApprenant',`date_naissance_apprenant`='$nouveldatenaissanceApprenant',`niveau_apprenant`='$nouveauniveauApprenant',`num_PE_apprenant`='$nouveaunumpeApprenant',`num_secu_apprenant`='$nouveaunumsecuApprenant',`rib_apprenant`='$nouveauribApprenant',`id_role`='$newIdroleapprenant',`id_session`='$newidsessionapprenant' WHERE `id_apprenant` = $IDapprenant ";
-                    $bdd->query($sqlapprenant);
-                    echo "L'Apprenant a été modifié dans la base de données.";
+                    // Récupération des données et échappement XSS
+                    $IDapprenant = isset($_POST['nouvelIDapprenant']) ? $_POST['nouvelIDapprenant'] : '';
+                    $nouveaunomApprenant = isset($_POST['nouveaunomApprenant']) ? htmlspecialchars($_POST['nouveaunomApprenant']) : '';
+                    $nouveauprenomApprenant = isset($_POST['nouveauprenomApprenant']) ? htmlspecialchars($_POST['nouveauprenomApprenant']) : '';
+                    $nouveaumailApprenant = isset($_POST['nouveaumailApprenant']) ? htmlspecialchars($_POST['nouveaumailApprenant']) : '';
+                    $nouveladresseApprenant = isset($_POST['nouveladresseApprenant']) ? htmlspecialchars($_POST['nouveladresseApprenant']) : '';
+                    $nouvelvilleApprenant = isset($_POST['nouvelvilleApprenant']) ? htmlspecialchars($_POST['nouvelvilleApprenant']) : '';
+                    $nouveaucpApprenant = isset($_POST['nouveaucpApprenant']) ? htmlspecialchars($_POST['nouveaucpApprenant']) : '';
+                    $nouveautelApprenant = isset($_POST['nouveautelApprenant']) ? htmlspecialchars($_POST['nouveautelApprenant']) : '';
+                    $nouveldatenaissanceApprenant = isset($_POST['nouveldatenaissanceApprenant']) ? $_POST['nouveldatenaissanceApprenant'] : '';
+                    $nouveauniveauApprenant = isset($_POST['nouveauniveauApprenant']) ? htmlspecialchars($_POST['nouveauniveauApprenant']) : '';
+                    $nouveaunumpeApprenant = isset($_POST['nouveaunumpeApprenant']) ? htmlspecialchars($_POST['nouveaunumpeApprenant']) : '';
+                    $nouveaunumsecuApprenant = isset($_POST['nouveaunumsecuApprenant']) ? htmlspecialchars($_POST['nouveaunumsecuApprenant']) : '';
+                    $nouveauribApprenant = isset($_POST['nouveauribApprenant']) ? htmlspecialchars($_POST['nouveauribApprenant']) : '';
+                    $newIdroleapprenant = isset($_POST['newIdroleapprenant']) ? $_POST['newIdroleapprenant'] : '';
+                    $newidsessionapprenant = isset($_POST['newidsessionapprenant']) ? $_POST['newidsessionapprenant'] : '';
+                
+                    // Vérification si les champs ne sont pas vides
+                    if (!empty($IDapprenant) && !empty($nouveaunomApprenant) && !empty($nouveauprenomApprenant) && !empty($nouveaumailApprenant) && !empty($nouveladresseApprenant) && !empty($nouvelvilleApprenant) && !empty($nouveaucpApprenant) && !empty($nouveautelApprenant) && !empty($nouveldatenaissanceApprenant) && !empty($nouveauniveauApprenant) && !empty($nouveaunumpeApprenant) && !empty($nouveaunumsecuApprenant) && !empty($nouveauribApprenant) && !empty($newIdroleapprenant) && !empty($newidsessionapprenant)) {
+                        // Requête préparée pour la modification d'apprenant
+                        $sqlapprenant = "UPDATE `apprenants` SET `nom_apprenant`=?, `prenom_apprenant`=?, `mail_apprenant`=?, `adresse_apprenant`=?, `ville_apprenant`=?, `code_postal_apprenant`=?, `tel_apprenant`=?, `date_naissance_apprenant`=?, `niveau_apprenant`=?, `num_PE_apprenant`=?, `num_secu_apprenant`=?, `rib_apprenant`=?, `id_role`=?, `id_session`=? WHERE `id_apprenant` = ?";
+                        $requete = $bdd->prepare($sqlapprenant);
+                        // Exécution de la requête en passant les valeurs comme paramètres
+                        $requete->execute([$nouveaunomApprenant, $nouveauprenomApprenant, $nouveaumailApprenant, $nouveladresseApprenant, $nouvelvilleApprenant, $nouveaucpApprenant, $nouveautelApprenant, $nouveldatenaissanceApprenant, $nouveauniveauApprenant, $nouveaunumpeApprenant, $nouveaunumsecuApprenant, $nouveauribApprenant, $newIdroleapprenant, $newidsessionapprenant, $IDapprenant]);
+                
+                        echo "L'Apprenant a été modifié dans la base de données.";
+                    } else {
+                        echo "Certains champs sont vides.";
+                    }
                 }
             } 
 
@@ -228,13 +246,23 @@ if(isset($_GET["page"]) && $_GET["page"] == "apprenants" ){
                 <input type='submit' name='supprimerApprenant' value='Supprimer'> 
                 </form>";
         
-            if (isset($_POST['supprimerApprenant'])){
-                $IDapprenant = $_POST['IDapprenant'];
-
-                $sqlapprenant = "DELETE FROM `apprenants` WHERE `id_apprenant` = $IDapprenant ";
-                $bdd->query($sqlapprenant);
-                echo "L'Apprenant a été supprimé de la base de données.";
-            }
+                if (isset($_POST['supprimerApprenant'])) {
+                    // Récupération de l'ID de l'apprenant
+                    $IDapprenant = isset($_POST['IDapprenant']) ? $_POST['IDapprenant'] : '';
+                
+                    // Vérification si l'ID de l'apprenant n'est pas vide
+                    if (!empty($IDapprenant)) {
+                        // Requête préparée pour la suppression de l'apprenant
+                        $sqlapprenant = "DELETE FROM `apprenants` WHERE `id_apprenant` = ?";
+                        $requete = $bdd->prepare($sqlapprenant);
+                        // Exécution de la requête en passant l'ID de l'apprenant comme paramètre
+                        $requete->execute([$IDapprenant]);
+                
+                        echo "L'Apprenant a été supprimé de la base de données.";
+                    } else {
+                        echo "L'ID de l'apprenant est vide.";
+                    }
+                }
         } 
     }  
 }

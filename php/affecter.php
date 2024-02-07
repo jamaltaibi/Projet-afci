@@ -43,21 +43,38 @@ if(isset($_GET["page"]) && $_GET["page"] == "affecter" ){
                         }
                     ?>
                     </select>
-                    <input type="submit" name="submitAffection" value="Enregistrer">
+                    <input type="submit" name="submitAffectation" value="Enregistrer">
                 </form>
         </div>
+<?php
 
-        <?php
-        if (isset($_POST['submitAffection'])){
-        $affecterIdpedago = $_POST['affecterIdpedago'];
-        $affecterIdrole = $_POST['affecterIdrole'];
+    if (isset($_POST['submitAffectation'])) {
+    // Récupération des données et échappement XSS
+    $affecterIdpedago = isset($_POST['affecterIdpedago']) ? $_POST['affecterIdpedago'] : '';
+    $affecterIdrole = isset($_POST['affecterIdrole']) ? $_POST['affecterIdrole'] : '';
 
-        $sqlaffecter = "INSERT INTO `affecter`(`id_pedagogie`, `id_centre`) VALUES ('$affecterIdpedago','$affecterIdrole')";
-        $bdd->query($sqlaffecter);
-        echo "data ajoutée dans la bdd";
-        }
-        ?>
+    // Vérification si les valeurs ne sont pas vides
+    if (!empty($affecterIdpedago) && !empty($affecterIdrole)) {
+        // Requête préparée pour l'insertion d'une affectation
+        $sqlaffecter = "INSERT INTO `affecter`(`id_pedagogie`, `id_centre`) VALUES (?, ?)";
+        $requete = $bdd->prepare($sqlaffecter);
+        // Exécution de la requête en passant les valeurs comme paramètres
+        $requete->execute([$affecterIdpedago, $affecterIdrole]);
 
+        echo "Data ajoutée dans la base de données.";
+    } else {
+        echo "Certains champs sont vides.";
+    }
+}
+
+    $sqlaffect = "SELECT `affecter`.`id_pedagogie`,`affecter`.`id_centre`,`pedagogie`.`id_pedagogie`,`pedagogie`.`nom_pedagogie`,`centres`.`id_centre`,`centres`.`ville_centre`
+    FROM `affecter`
+    LEFT JOIN `pedagogie` ON `affecter`.`id_pedagogie` = `pedagogie`.`id_pedagogie`
+    LEFT JOIN `centres` ON `affecter`.`id_centre` = `centres`.`id_centre`";
+    $requeteaffect = $bdd->query($sqlaffect);
+    $resultsaffect = $requeteaffect->fetchAll(PDO::FETCH_ASSOC);
+
+?>
         <h2>Liste des Affectation :</h2>
             <table border='1'>
             <tr> <th>ID Pedagogie - Nom</th> <th>ID Centre - Ville</th> </tr>
@@ -84,9 +101,11 @@ if(isset($_GET["page"]) && $_GET["page"] == "affecter" ){
                     </form>
                 </td>
             </tr>
-            <?php } ?>
+<?php 
+            } 
+?>
             </table>
-            <?php
+<?php
             
         if (isset($_GET['type']) && $_GET['type'] == 'modifier') {
             if(isset($_POST["modifaffectPedago"])&& isset($_POST["modifaffectCentre"])){
@@ -113,9 +132,9 @@ if(isset($_GET["page"]) && $_GET["page"] == "affecter" ){
                 foreach( $resultsc as $value ){             
                     echo '<option value="' . $value['id_centre'] .  '">' . $value['id_centre'] . ' - ' . $value['ville_centre'] . '</option>';   
                     }
-                ?>
+?>
                 </select>
-                <?php
+<?php
                     echo"<input type='submit' name='modifierAffectation' value='Modifier'>
                 </form>";
             if (isset($_POST['modifierAffectation'])) {
@@ -132,6 +151,7 @@ if(isset($_GET["page"]) && $_GET["page"] == "affecter" ){
         }
         if (isset($_GET['type']) && $_GET['type'] == 'supprimer') {
             if(isset($_POST["suppaffectPedago"])&& isset($_POST["suppaffectCentre"])){
+                echo 'sur le point de supprimer';
                 $suppaffectPedago = $_POST['suppaffectPedago'];
                 $suppaffectCentre = $_POST['suppaffectCentre'];
             
@@ -154,3 +174,4 @@ if(isset($_GET["page"]) && $_GET["page"] == "affecter" ){
         }                   
     }
 }
+?>

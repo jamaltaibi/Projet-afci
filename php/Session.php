@@ -63,23 +63,34 @@ if(isset($_GET["page"]) && $_GET["page"] == "session" ){
         </script>
     <?php
 
-    if (isset($_POST['submitSession'])){
-        $nomSession = $_POST['nomSession'];
-        $dateSession = $_POST['dateSession'];
-        $idpedagoSession = $_POST['idpedagosession'];
-        $idformationSession = $_POST['idformationsession'];
-        $idcentreSession = $_POST['idcentreSession'];
+     // "INSERT INTO `localiser` (`id_formation`, `id_centre`) VALUES ('$idformationSession', '$idcentreSession') ON DUPLICATE KEY UPDATE `id_formation`='$idformationSession', `id_centre`='$idcentreSession'";
+
+     if (isset($_POST['submitSession'])) {
+        // Récupération des données et échappement XSS
+        $nomSession = isset($_POST['nomSession']) ? htmlspecialchars($_POST['nomSession']) : '';
+        $dateSession = isset($_POST['dateSession']) ? $_POST['dateSession'] : '';
+        $idpedagoSession = isset($_POST['idpedagosession']) ? $_POST['idpedagosession'] : '';
+        $idformationSession = isset($_POST['idformationsession']) ? $_POST['idformationsession'] : '';
+        $idcentreSession = isset($_POST['idcentreSession']) ? $_POST['idcentreSession'] : '';
+        
+        // Vérification si les champs ne sont pas vides
+        if (!empty($nomSession) && !empty($dateSession) && !empty($idpedagoSession) && !empty($idformationSession) && !empty($idcentreSession)) {
+            // Requête préparée pour l'insertion de session
+            $sql = "INSERT INTO `session`(`nom_session`,`date_debut`,`id_pedagogie`,`id_formation`,`id_centre`) VALUES (?, ?, ?, ?, ?)";
+            $requete = $bdd->prepare($sql);
+            // Exécution de la requête en passant les valeurs comme paramètres
+            $requete->execute([$nomSession, $dateSession, $idpedagoSession, $idformationSession, $idcentreSession]);
     
-
-        $sql = "INSERT INTO `session`(`nom_session`,`date_debut`,`id_pedagogie`,`id_formation`,`id_centre`) VALUES ('$nomSession','$dateSession','$idpedagoSession','$idformationSession','$idcentreSession')";
-        $bdd->query($sql);
-
-        $sqllo = "INSERT INTO `localiser`(`id_formation`, `id_centre`) VALUES ('$idformationSession','$idcentreSession')";
-        $bdd->query($sqllo);
-
-        // "INSERT INTO `localiser` (`id_formation`, `id_centre`) VALUES ('$idformationSession', '$idcentreSession') ON DUPLICATE KEY UPDATE `id_formation`='$idformationSession', `id_centre`='$idcentreSession'";
-
-        echo "data ajoutée dans la bdd";
+            // Requête préparée pour l'insertion de localisation
+            $sqllo = "INSERT INTO `localiser`(`id_formation`, `id_centre`) VALUES (?, ?)";
+            $requete2 = $bdd->prepare($sqllo);
+            // Exécution de la requête en passant les valeurs comme paramètres
+            $requete2->execute([$idformationSession, $idcentreSession]);
+    
+            echo "Données ajoutées dans la base de données.";
+        } else {
+            echo "Certains champs sont vides.";
+        }
     }
 
     $sql = "SELECT `session`.`id_session`,`session`.`nom_session`,`session`.`date_debut`,`session`.`id_pedagogie`,`pedagogie`.`nom_pedagogie`,`pedagogie`.`prenom_pedagogie`,`session`.`id_formation`,`formations`.`nom_formation`,`session`.`id_centre`,`centres`.`ville_centre`
@@ -161,22 +172,34 @@ if(isset($_GET["page"]) && $_GET["page"] == "session" ){
             </div>
     <?php
     
-            if (isset($_POST['modifierSession'])) {
-                $nouvelIDsession = $_POST['nouvelIDsession'];
-                $nouveauNomSession = $_POST['nouveauNomSession'];
-                $nouvelDateSession = $_POST['nouvelDateSession'];
-                $nouvelIdpedagosession = $_POST['nouvelIdpedagosession'];
-                $nouvelIdformationsession = $_POST['nouvelIdformationsession'];
-                $nouvelIdcentresession = $_POST['nouvelIdcentresession'];
-
-                $sqlsession = "UPDATE `session` SET `id_session`='$nouvelIDsession',`nom_session`='$nouveauNomSession',`date_debut`='$nouvelDateSession',`id_pedagogie`='$nouvelIdpedagosession',`id_formation`='$nouvelIdformationsession',`id_centre`='$nouvelIdcentresession' WHERE `id_session` = $nouvelIDsession";
-                $bdd->query($sqlsession);
-
-                $sqllocaliser = "UPDATE `localiser` SET `id_formation`='$nouvelIdformationsession',`id_centre`='$nouvelIdcentresession' WHERE `id_formation` = $nouvelIdformationsession AND `id_centre` = $nouvelIdcentresession ";
-                $bdd->query($sqllocaliser);
-
-                echo "La Session a été modifié dans la base de données.";
-            }
+    if (isset($_POST['modifierSession'])) {
+        // Récupération des données et échappement XSS
+        $nouvelIDsession = isset($_POST['nouvelIDsession']) ? $_POST['nouvelIDsession'] : '';
+        $nouveauNomSession = isset($_POST['nouveauNomSession']) ? htmlspecialchars($_POST['nouveauNomSession']) : '';
+        $nouvelDateSession = isset($_POST['nouvelDateSession']) ? $_POST['nouvelDateSession'] : '';
+        $nouvelIdpedagosession = isset($_POST['nouvelIdpedagosession']) ? $_POST['nouvelIdpedagosession'] : '';
+        $nouvelIdformationsession = isset($_POST['nouvelIdformationsession']) ? $_POST['nouvelIdformationsession'] : '';
+        $nouvelIdcentresession = isset($_POST['nouvelIdcentresession']) ? $_POST['nouvelIdcentresession'] : '';
+    
+        // Vérification si les champs ne sont pas vides
+        if (!empty($nouvelIDsession) && !empty($nouveauNomSession) && !empty($nouvelDateSession) && !empty($nouvelIdpedagosession) && !empty($nouvelIdformationsession) && !empty($nouvelIdcentresession)) {
+            // Requête préparée pour la modification de session
+            $sqlsession = "UPDATE `session` SET `nom_session`=?, `date_debut`=?, `id_pedagogie`=?, `id_formation`=?, `id_centre`=? WHERE `id_session` = ?";
+            $requete = $bdd->prepare($sqlsession);
+            // Exécution de la requête en passant les valeurs comme paramètres
+            $requete->execute([$nouveauNomSession, $nouvelDateSession, $nouvelIdpedagosession, $nouvelIdformationsession, $nouvelIdcentresession, $nouvelIDsession]);
+    
+            // Requête préparée pour la mise à jour de localiser
+            $sqllocaliser = "UPDATE `localiser` SET `id_formation`=?, `id_centre`=? WHERE `id_formation` = ? AND `id_centre` = ?";
+            $requete2 = $bdd->prepare($sqllocaliser);
+            // Exécution de la requête en passant les valeurs comme paramètres
+            $requete2->execute([$nouvelIdformationsession, $nouvelIdcentresession, $nouvelIdformationsession, $nouvelIdcentresession]);
+    
+            echo "La Session a été modifié dans la base de données.";
+        } else {
+            echo "Certains champs sont vides.";
+        }
+    }
         }
         if ($actionsession == 'supprimer') {
             $sqlsession = "SELECT * FROM `session` WHERE `id_session` = $idsession";
@@ -189,13 +212,21 @@ if(isset($_GET["page"]) && $_GET["page"] == "session" ){
                     <input type='submit' name='supprimerSession' value='Supprimer'> 
                     </form>";
             
-            if (isset($_POST['supprimerSession'])){
-                $IDsession = $_POST['IDsession'];
-
-                $sqlsession = "DELETE FROM `session` WHERE `id_session` = $IDsession ";
-                $bdd->query($sqlsession);
-                echo "La Session a été supprimé de la base de données.";
-            }
+                    if (isset($_POST['supprimerSession'])) {
+                        // Récupération de l'identifiant de la session et échappement XSS
+                        $IDsession = isset($_POST['IDsession']) ? $_POST['IDsession'] : '';
+                    
+                        // Vérification si l'identifiant n'est pas vide
+                        if (!empty($IDsession)) {
+                            // Requête préparée pour la suppression de session
+                            $sqlsession = "DELETE FROM `session` WHERE `id_session` = ?";
+                            $requete = $bdd->prepare($sqlsession);
+                            // Exécution de la requête en passant l'IDsession comme paramètre
+                            $requete->execute([$IDsession]);
+                    
+                            echo "La Session a été supprimée de la base de données.";
+                        } 
+                    }
         } 
     } 
 }

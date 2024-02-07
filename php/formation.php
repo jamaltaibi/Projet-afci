@@ -3,6 +3,7 @@
 <?php
 if(isset($_GET["page"]) && $_GET["page"] == "formation" ){
     ?>
+    
         <h1 class="titre">Ajouter une Formation</h1>
         <input type='submit' value="Ajout d'une Formation" onclick="toggleFormVisibility()">
     <div class="ajoutform">
@@ -26,16 +27,26 @@ if(isset($_GET["page"]) && $_GET["page"] == "formation" ){
     </script>
     <?php
 
-    if (isset($_POST['submitFormation'])){
-        $nomFormation = $_POST['nomFormation'];
-        $dureeFormation = $_POST['dureeFormation'];
-        $niveauformation = $_POST['niveauformation'];
-        $descriptionFormation = $_POST['descriptionFormation'];
+if (isset($_POST['submitFormation'])) {
+    // Récupération des données et échappement
+    $nomFormation = isset($_POST['nomFormation']) ? htmlspecialchars($_POST['nomFormation']) : '';
+    $dureeFormation = isset($_POST['dureeFormation']) ? htmlspecialchars($_POST['dureeFormation']) : '';
+    $niveauformation = isset($_POST['niveauformation']) ? htmlspecialchars($_POST['niveauformation']) : '';
+    $descriptionFormation = isset($_POST['descriptionFormation']) ? htmlspecialchars($_POST['descriptionFormation']) : '';
 
-        $sqlformation = "INSERT INTO `formations`(`nom_formation`, `duree_formation`, `niveau_sortie_formation`, `description`) VALUES ('$nomFormation ','$dureeFormation ',' $niveauformation','$descriptionFormation ')";
-        $bdd->query($sqlformation);
-        echo "data ajoutée dans la bdd";
+    // Vérification si les champs ne sont pas vides
+    if (!empty($nomFormation) && !empty($dureeFormation) && !empty($niveauformation) && !empty($descriptionFormation)) {
+        // Requête préparée pour l'insertion
+        $sqlformation = "INSERT INTO `formations`(`nom_formation`, `duree_formation`, `niveau_sortie_formation`, `description`) VALUES (?, ?, ?, ?)";
+        $requete = $bdd->prepare($sqlformation);
+        // Exécution de la requête en passant les valeurs comme paramètres
+        $requete->execute([$nomFormation, $dureeFormation, $niveauformation, $descriptionFormation]);
+
+        echo "Données ajoutées dans la base de données.";
+    } else {
+        echo "Certains champs sont vides.";
     }
+}
 
     $sqlformation = "SELECT * FROM formations";
     $requeteformation = $bdd->query($sqlformation);
@@ -86,15 +97,25 @@ if(isset($_GET["page"]) && $_GET["page"] == "formation" ){
                 </form>";
         
                 if (isset($_POST['modifierFormation'])) {
-                    $IDformation = $_POST['nouvelIDformation'];
-                    $nouveauNomformation = $_POST['nouveauNomformation'];
-                    $nouvelDureeformation = $_POST['nouvelDureeformation'];
-                    $nouveauNiveauformation = $_POST['nouveauNiveauformation'];
-                    $nouveldescriptionformation = $_POST['nouveldescriptionformation'];
-
-                    $sqlformation = "UPDATE `formations` SET `nom_formation`='$nouveauNomformation',`duree_formation`='$nouvelDureeformation',`niveau_sortie_formation`='$nouveauNiveauformation',`description`='$nouveldescriptionformation' WHERE `id_formation` = $IDformation";
-                    $bdd->query($sqlformation);
-                    echo "La Formation a été modifié dans la base de données.";
+                    // Récupération des données et échappement
+                    $IDformation = isset($_POST['nouvelIDformation']) ? $_POST['nouvelIDformation'] : '';
+                    $nouveauNomformation = isset($_POST['nouveauNomformation']) ? htmlspecialchars($_POST['nouveauNomformation']) : '';
+                    $nouvelDureeformation = isset($_POST['nouvelDureeformation']) ? htmlspecialchars($_POST['nouvelDureeformation']) : '';
+                    $nouveauNiveauformation = isset($_POST['nouveauNiveauformation']) ? htmlspecialchars($_POST['nouveauNiveauformation']) : '';
+                    $nouveldescriptionformation = isset($_POST['nouveldescriptionformation']) ? htmlspecialchars($_POST['nouveldescriptionformation']) : '';
+                
+                    // Vérification si les champs ne sont pas vides
+                    if (!empty($IDformation) && !empty($nouveauNomformation) && !empty($nouvelDureeformation) && !empty($nouveauNiveauformation) && !empty($nouveldescriptionformation)) {
+                        // Requête préparée pour la mise à jour
+                        $sqlformation = "UPDATE `formations` SET `nom_formation`=?, `duree_formation`=?, `niveau_sortie_formation`=?, `description`=? WHERE `id_formation` = ?";
+                        $requete = $bdd->prepare($sqlformation);
+                        // Exécution de la requête en passant les valeurs comme paramètres
+                        $requete->execute([$nouveauNomformation, $nouvelDureeformation, $nouveauNiveauformation, $nouveldescriptionformation, $IDformation]);
+                
+                        echo "La Formation a été modifiée dans la base de données.";
+                    } else {
+                        echo "Certains champs sont vides.";
+                    }
                 }
             }
         if ($actionformation == 'supprimer') {
@@ -108,14 +129,21 @@ if(isset($_GET["page"]) && $_GET["page"] == "formation" ){
                     <input type='submit' name='supprimerFormation' value='Supprimer'> 
                 </form>";
                 
-            if (isset($_POST['supprimerFormation'])){
-                $IDformation = $_POST['IDformation'];
-
-                $sqlformation = "DELETE FROM `formations` WHERE `id_formation`= $IDformation ";
-                $bdd->query($sqlformation);
-                echo "La Formation a été supprimé de la base de données.";
-
-            }
-        } 
+                if (isset($_POST['supprimerFormation'])) {
+                    // Récupération des données
+                    $IDformation = isset($_POST['IDformation']) ? $_POST['IDformation'] : '';
+                
+                    // Vérification si l'identifiant de la formation n'est pas vide
+                    if (!empty($IDformation)) {
+                        // Requête préparée pour la suppression
+                        $sqlformation = "DELETE FROM `formations` WHERE `id_formation`= ?";
+                        $requete = $bdd->prepare($sqlformation);
+                        // Exécution de la requête en passant l'IDformation comme paramètre
+                        $requete->execute([$IDformation]);
+                
+                        echo "La Formation a été supprimée de la base de données.";
+                    }
+            } 
+        }
     }
 }

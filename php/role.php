@@ -1,7 +1,4 @@
 
-<!-- // Gestion Role :
-// Insérer des données dans la BDD -->
-
 <?php
 
 if(isset($_GET["page"]) && $_GET["page"] == "role" ){   
@@ -77,8 +74,8 @@ if(isset($_GET["page"]) && $_GET["page"] == "role" ){
             echo "<h1 class='titre'>Modification du rôle</h1>";
             echo "<form method='POST'>
                       <label> Nouveau Nom de Role </label>
-                      <input type='hidden' name='idrole' value='" . $role['id_role'] . "'>
-                      <input type='text' name='nouveauNomRole' value='" . $role['nom_role'] . "'>
+                      <input type='hidden' name='idrole' value='" . htmlspecialchars($role['id_role']) . "'>
+                      <input type='text' name='nouveauNomRole' value='" . htmlspecialchars($role['nom_role']) . "'>
                       <input type='submit' name='modifierRole' value='Modifier'>
                   </form>";
     

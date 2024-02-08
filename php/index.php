@@ -17,6 +17,7 @@
                 <a href="?page=session"> <li>Session</li> </a>
                 <a href="?page=apprenants"> <li>Apprenants</li> </a>
                 <a href="?page=affecter"> <li>Affecter</li> </a>
+                <a href="?page=connexion"> <li>Connexion</li> </a>
             </ul>
         </nav>
     </header>
@@ -56,6 +57,7 @@ include ('equipePedago.php');
 include ('Session.php');
 include ('Apprenant.php');
 include ('affecter.php');
+include ('connexion.php')
        
 ?> 
 </body>

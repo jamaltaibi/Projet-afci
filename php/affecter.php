@@ -2,13 +2,9 @@
 <?php
 if(isset($_GET["page"]) && $_GET["page"] == "affecter" ){
 
-    $sqlp = "SELECT * FROM pedagogie";
-    $requetep = $bdd->query($sqlp);
-    $resultsp = $requetep->fetchAll(PDO::FETCH_ASSOC);
-
-    $sqlc = "SELECT * FROM centres";
-    $requetec = $bdd->query($sqlc);
-    $resultsc = $requetec->fetchAll(PDO::FETCH_ASSOC);
+    
+    $resultsp = getRows($bdd, "pedagogie");
+    $resultsc = getRows($bdd, "centres");
 
     ?>
         <h1 class="titre">Ajouter une affectation</h1>
@@ -77,15 +73,6 @@ if(isset($_GET["page"]) && $_GET["page"] == "affecter" ){
                         <input type="hidden" name="suppaffectPedago" value="<?php echo htmlspecialchars($value['id_pedagogie'] );?>">
                         <input type="hidden" name="suppaffectCentre" value="<?php echo htmlspecialchars($value['id_centre'] );?>">
                         <input type="submit" name="suppAffect" value="Supprimer">
-
-
-
-
-
-
-
-
-                        
                     </form>
                 </td>
             </tr>

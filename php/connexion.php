@@ -5,8 +5,8 @@ if(isset($_GET["page"]) && $_GET["page"] == "connexion" ){
 ?>
 
 <form method="POST" action="">
-    <h2>Nouvel utilisateur</h2>
-    <label for=""> utilisateur</label>
+    <h1>Nouvel utilisateur</h1>
+    <label for=""> Utilisateur</label>
     <input type="text" name="newIdentifiant">
     <label for="">Mot de passe</label>
     <input type="text" name="newPasseword">
@@ -15,7 +15,7 @@ if(isset($_GET["page"]) && $_GET["page"] == "connexion" ){
 
 <form method="POST" action="">
     <h2>Connexion Utilisateur</h2>
-    <label for=""> utilisateur</label>
+    <label for=""> Utilisateur</label>
     <input type="text" name="identifiant">
     <label for="">Mot de passe</label>
     <input type="text" name="password">

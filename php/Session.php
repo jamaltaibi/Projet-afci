@@ -2,21 +2,12 @@
 <?php
 if(isset($_GET["page"]) && $_GET["page"] == "session" ){
 
-    $sqlp = "SELECT * FROM pedagogie";
-    $requetep = $bdd->query($sqlp);
-    $resultsp = $requetep->fetchAll(PDO::FETCH_ASSOC);
 
-    $sqlf = "SELECT * FROM formations";
-    $requetef = $bdd->query($sqlf);
-    $resultsf = $requetef->fetchAll(PDO::FETCH_ASSOC);
 
-    $sqlc = "SELECT * FROM centres";
-    $requetec = $bdd->query($sqlc);
-    $resultsc = $requetec->fetchAll(PDO::FETCH_ASSOC);
-
-    $sqllo = "SELECT * FROM localiser";
-    $requetelo = $bdd->query($sqllo);
-    $resultslo = $requetelo->fetchAll(PDO::FETCH_ASSOC);
+    $resultsp = getRows($bdd, "pedagogie");
+    $resultsf = getRows($bdd, "formations");
+    $resultsc = getRows($bdd, "centres");
+    $resultslo = getRows($bdd, "localiser");
 
     ?>
         <h1 class="titre">Ajouter une Session</h1>

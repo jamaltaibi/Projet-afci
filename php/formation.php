@@ -2,6 +2,9 @@
 
 <?php
 if(isset($_GET["page"]) && $_GET["page"] == "formation" ){
+    $resultsformation = getRows($bdd, "formations");
+
+
     ?>
     
         <h1 class="titre">Ajouter une Formation</h1>
@@ -48,9 +51,6 @@ if (isset($_POST['submitFormation'])) {
     }
 }
 
-    $sqlformation = "SELECT * FROM formations";
-    $requeteformation = $bdd->query($sqlformation);
-    $resultsformation = $requeteformation->fetchAll(PDO::FETCH_ASSOC);
 
     echo "<h2>Liste des Formations :</h2>";
     echo "<table border='1'>";

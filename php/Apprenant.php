@@ -2,13 +2,8 @@
 <?php
 if(isset($_GET["page"]) && $_GET["page"] == "apprenants" ){
 
-    $sqlr = "SELECT * FROM role";
-    $requeter = $bdd->query($sqlr);
-    $resultsr = $requeter->fetchAll(PDO::FETCH_ASSOC);
-
-    $sqls = "SELECT * FROM session";
-    $requetes = $bdd->query($sqls);
-    $resultss = $requetes->fetchAll(PDO::FETCH_ASSOC);
+    $resultsr = getRows($bdd, "role");
+    $resultss = getRows($bdd, "session");
 
 
     $sql = "SELECT `apprenants`.`id_apprenant`,`apprenants`.`nom_apprenant`, `apprenants`.`prenom_apprenant`,`apprenants`.`mail_apprenant`,`apprenants`.`adresse_apprenant`,`apprenants`.`ville_apprenant`,`apprenants`.`code_postal_apprenant`,`apprenants`.`tel_apprenant`,`apprenants`.`date_naissance_apprenant`,`apprenants`.`niveau_apprenant`,`apprenants`.`num_PE_apprenant`,`apprenants`.`num_secu_apprenant`,`apprenants`.`rib_apprenant`,
@@ -20,7 +15,7 @@ if(isset($_GET["page"]) && $_GET["page"] == "apprenants" ){
     $requete = $bdd->query($sql);
     $results = $requete->fetchAll(PDO::FETCH_ASSOC);
 
-    echo "<h2>Liste des Apprenants :</h2>";
+    echo "<h1>Liste des Apprenants :</h1>";
     
     echo "<div style='width:100vw;' > <table border='1'>";
     echo "<tr> <th>ID</th> <th>Nom</th> <th>Prénom</th> <th>Mail</th> <th>Adresse</th> <th>Ville</th> <th>Code Postale</th> <th>Tel</th> <th>Date de Naissance</th><th>Niveau Scolaire</th> <th>Numéro Pole emploi</th> <th>Numero Secu</th><th>RIB</th> <th>ID Role</th> <th>Nom Role</th> <th>Id Session</th> <th>Nom Session</th><th>Modification</th><th>Suppression</th> </tr>";
@@ -55,7 +50,7 @@ if(isset($_GET["page"]) && $_GET["page"] == "apprenants" ){
 
     ?>
     <div style="width: 90vw;"></div>
-        <h1 class="titre">Ajouter un Apprenant</h1>
+        <h2 class="titre">Ajouter un Apprenant</h2>
         <input type='submit' value="Ajout d'un Apprenant" onclick="toggleFormVisibility()">
         <div class="ajoutapprenant">
             <form class="ajoutapp" method="POST" id="ajoutapprenant" style="display:none">

@@ -50,6 +50,14 @@ $pass = "admin"; // Remplacez par votre mot de passe
     //     echo "<br>";
     // }
 
+
+    function getRows($bdd, $table) {
+        $sql = "SELECT * FROM $table";
+        $requete = $bdd->query($sql);
+        $results = $requete->fetchAll(PDO::FETCH_ASSOC);
+        return $results;
+    }
+
 include ('role.php');
 include ('centre.php');
 include ('formation.php');
@@ -57,8 +65,8 @@ include ('equipePedago.php');
 include ('Session.php');
 include ('Apprenant.php');
 include ('affecter.php');
-include ('connexion.php')
-       
+include ('connexion.php');
+     
 ?> 
 </body>
 </html>

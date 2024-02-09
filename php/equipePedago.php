@@ -2,9 +2,8 @@
 <?php
 if(isset($_GET["page"]) && $_GET["page"] == "pedagogie" ){
 
-    $sqlrole = "SELECT * FROM role";
-    $requeterole = $bdd->query($sqlrole);
-    $resultsrole = $requeterole->fetchAll(PDO::FETCH_ASSOC);
+    $resultsrole = getRows($bdd, "role");
+
 
     ?>
         <h1 class="titre">Ajouter un Membre de l'équipe pédagogique</h1>
@@ -60,7 +59,9 @@ if (isset($_POST['submitPedagogie'])) {
     }
 }
 
-    $sqlep = "SELECT `pedagogie`.`id_pedagogie`,`pedagogie`.`nom_pedagogie`, `pedagogie`.`prenom_pedagogie`, `pedagogie`.`mail_pedagogie`,`pedagogie`.`num_pedagogie`, `role`.`id_role`,`role`.`nom_role` FROM `pedagogie` INNER JOIN  `role` on `pedagogie`.`id_role` = `role`.`id_role`";
+    $sqlep = "SELECT `pedagogie`.`id_pedagogie`,`pedagogie`.`nom_pedagogie`, `pedagogie`.`prenom_pedagogie`, `pedagogie`.`mail_pedagogie`,`pedagogie`.`num_pedagogie`, `role`.`id_role`,`role`.`nom_role` 
+    FROM `pedagogie` 
+    INNER JOIN  `role` on `pedagogie`.`id_role` = `role`.`id_role`";
     $requeteep = $bdd->query($sqlep);
     $resultsep = $requeteep->fetchAll(PDO::FETCH_ASSOC);
 
@@ -92,7 +93,8 @@ if (isset($_POST['submitPedagogie'])) {
     
        if ($actionep == 'modifier') {
             
-            $sqlep = "SELECT `id_pedagogie`, `nom_pedagogie`, `prenom_pedagogie`, `mail_pedagogie`, `num_pedagogie`, `id_role` FROM `pedagogie` WHERE `id_pedagogie` = $idep";
+            $sqlep = "SELECT `id_pedagogie`, `nom_pedagogie`, `prenom_pedagogie`, `mail_pedagogie`, `num_pedagogie`, `id_role` 
+            FROM `pedagogie` WHERE `id_pedagogie` = $idep";
             $requeteep = $bdd->query($sqlep);
             $pedagogie= $requeteep->fetch(PDO::FETCH_ASSOC);
     
